@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Blog UI</title>
+</head>
+<body>
+
+    <h1>Blog UI</h1>
+
+    <h2>Create User</h2>
+    <input id="username" placeholder="Username" />
+    <input id="email" placeholder="Email" />
+    <button onclick="createUser()">Create User</button>
+
+    <h2>Create Post</h2>
+    <input id="title" placeholder="Title" />
+    <input id="content" placeholder="Content" />
+    <input id="user_id" placeholder="User ID" />
+    <button onclick="createPost()">Create Post</button>
+
+    <h2>Posts</h2>
+    <button onclick="loadPosts()">Load Posts</button>
+    <ul id="posts"></ul>
+
+    <script>
+        async function loadPosts() {
+            const res = await fetch("/api/posts");
+            const posts = await res.json();
+
+            const list = document.getElementById("posts");
+            list.innerHTML = "";
+
+            posts.forEach(post => {
+                const li = document.createElement("li");
+                li.innerText = `${post.title} - ${post.content}`;
+                list.appendChild(li);
+            });
+        }
+
+        async function createUser() {
+            const username = document.getElementById("username").value;
+            const email = document.getElementById("email").value;
+
+            await fetch("/api/users", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ username, email })
+            });
+
+            alert("User created");
+        }
+
+        async function createPost() {
+            const title = document.getElementById("title").value;
+            const content = document.getElementById("content").value;
+            const user_id = document.getElementById("user_id").value;
+
+            await fetch("/api/posts", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ title, content, user_id: parseInt(user_id) })
+            });
+
+            alert("Post created");
+        }
+    </script>
+
+</body>
+</html>
